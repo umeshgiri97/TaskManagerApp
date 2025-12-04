@@ -1,0 +1,90 @@
+﻿@model List<TaskManagerApp.Models.TaskItem>
+
+@{
+    ViewData["Title"] = "Task Manager";
+}
+
+<div class="container mt-5" style="max-width: 600px;">
+    <h2 class="text-center mb-4">Task Manager</h2>
+
+<form method="post" asp-action="Add" class="row g-2 mb-4">
+    <div class="col-md-6">
+        <input type="text" name="title" placeholder="Enter a new task" class="form-control" />
+    </div>
+
+    <div class="col-md-3">
+        <input type="date" name="dueDate" class="form-control" />
+    </div>
+
+    <div class="col-md-2">
+        <select name="priority" class="form-select">
+            <option value="1">Low</option>
+            <option value="2" selected>Medium</option>
+            <option value="3">High</option>
+        </select>
+    </div>
+
+    <div class="col-md-1 d-grid">
+        <button type="submit" class="btn btn-primary">Add</button>
+    </div>
+</form>
+
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">No tasks yet. Add one above!</div>
+    }
+    else
+    {
+        <ul class="list-group">
+        @foreach (var task in Model)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+
+                <div>
+                    @if (task.IsCompleted)
+                    {
+                       <span class="text-success fw-bold text-decoration-line-through">
+
+                            ✔ @task.Title
+                        </span>
+                    }
+                    else
+                    {
+                       <div>
+    <strong>@task.Title</strong>
+    <br />
+
+    <small>
+        Priority:
+        <span class="badge
+            @(task.Priority == TaskManagerApp.Models.TaskPriority.High ? "bg-danger" :
+              task.Priority == TaskManagerApp.Models.TaskPriority.Medium ? "bg-warning text-dark" :
+              "bg-secondary")">
+            @task.Priority
+        </span>
+
+        @if (task.DueDate.HasValue)
+        {
+            <span class="ms-2">
+                Due: @task.DueDate.Value.ToString("dd-MMM-yyyy")
+            </span>
+        }
+    </small>
+</div>
+
+                    }
+                </div>
+
+                <div class="btn-group">
+                    @if (!task.IsCompleted)
+                    {
+                        <a asp-action="Complete" asp-route-id="@task.Id" class="btn btn-sm btn-success">Complete</a>
+                    }
+                    <a asp-action="Delete" asp-route-id="@task.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                </div>
+            </li>
+        }
+        </ul>
+    }
+</div>
